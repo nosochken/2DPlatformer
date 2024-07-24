@@ -7,8 +7,6 @@ public class PlayerCoinCollector : MonoBehaviour
 
     private int _amountOfCollectedCoins;
 
-    public int AmountOfCollectedCoins => _amountOfCollectedCoins;
-
     private void Awake()
     {
         _coinDetector = GetComponent<CoinDetector>();

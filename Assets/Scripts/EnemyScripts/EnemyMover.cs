@@ -14,13 +14,12 @@ public class EnemyMover : MonoBehaviour
     private Rigidbody2D _rigidbody;
 
     private WaitForFixedUpdate _waitForFixedUpdate;
-    private WaitForSecondsRealtime _waitForSeconds;
+    private WaitForSeconds _waitForSeconds;
 
     private int _oppositeMovement = -1;
 
     private bool _shouldReachRightEdge;
     private bool _shouldReachLeftEdge;
-    private bool _shouldLookAround;
 
     public event Action<bool> IsStanding;
     public event Action<bool> IsWalking;
@@ -34,7 +33,7 @@ public class EnemyMover : MonoBehaviour
         _collider = GetComponent<Collider2D>();
 
         _waitForFixedUpdate = new WaitForFixedUpdate();
-        _waitForSeconds = new WaitForSecondsRealtime(_standingForSeconds);
+        _waitForSeconds = new WaitForSeconds(_standingForSeconds);
     }
 
     private void OnEnable()
@@ -49,7 +48,7 @@ public class EnemyMover : MonoBehaviour
         _stander.IsStanding -= isStanding => IsStanding?.Invoke(isStanding);
     }
 
-    public void TryMove(float leftmostX, float rightmostX)
+    public void Move(float leftmostX, float rightmostX)
     {
         if (_stander.IsOnPlatform)
         {
@@ -113,13 +112,10 @@ public class EnemyMover : MonoBehaviour
     {
         _shouldReachRightEdge = false;
         _shouldReachLeftEdge = false;
-        _shouldLookAround = true;
     }
 
     private IEnumerator LookAround()
     {
-        _shouldLookAround = false;
-
         yield return _waitForSeconds;
     }
 }

@@ -1,6 +1,7 @@
 using System;
+using UnityEngine;
 
-public interface ISpawnable
+public interface ISpawnable<T> where T : MonoBehaviour
 {
-    public event Action<ISpawnable> ReadyToSpawn;
+	public event Action<T> ReadyToSpawn;
 }

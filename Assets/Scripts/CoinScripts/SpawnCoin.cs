@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(DetectCoin))]
-public class SpawnCoin : MonoBehaviour, ISpawnable
+public class SpawnCoin : MonoBehaviour, ISpawnable<SpawnCoin>
 {
     private DetectCoin _detectCoin;
 
-    public event Action<ISpawnable> ReadyToSpawn;
+    public event Action<SpawnCoin> ReadyToSpawn;
 
     private void Awake()
     {

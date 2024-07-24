@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnArea<T> : MonoBehaviour where T : MonoBehaviour, ISpawnable
+public class SpawnArea<T> : MonoBehaviour where T : MonoBehaviour, ISpawnable<T>
 {
     [SerializeField] private T _prefab;
 

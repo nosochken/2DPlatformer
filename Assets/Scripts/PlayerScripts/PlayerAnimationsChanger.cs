@@ -48,6 +48,6 @@ public class PlayerAnimationsChanger : MonoBehaviour
         _player.gameObject.TryGetComponent(out SpriteRenderer playerSpriteRenderer);
 
         if (playerSpriteRenderer != null)
-            playerSpriteRenderer.flipX = (direction >= 0) ? false : true;
+            playerSpriteRenderer.flipX = direction < 0;
     }
 }

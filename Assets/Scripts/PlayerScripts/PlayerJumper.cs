@@ -38,10 +38,10 @@ public class PlayerJumper : MonoBehaviour
         _inputReader.JumpKeyPressed -= TryChangeJumpingState;
     }
 
-    public void TryJump()
+    public void Jump()
     {
         if (_shouldJump)
-            StartCoroutine(Jump());
+            StartCoroutine(PerformJump());
     }
 
     private void TryChangeJumpingState()
@@ -50,7 +50,7 @@ public class PlayerJumper : MonoBehaviour
             _shouldJump = true;
     }
 
-    private IEnumerator Jump()
+    private IEnumerator PerformJump()
     {
         IsJumping?.Invoke(_shouldJump);
 

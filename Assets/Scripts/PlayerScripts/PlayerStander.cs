@@ -23,17 +23,17 @@ public class PlayerStander : MonoBehaviour
 
     private void OnEnable()
     {
-        _platformDetector.DetectedWithCollisionInformation += TryStand;
+        _platformDetector.DetectedWithCollisionInformation += Stand;
         _platformDetector.Missed += StopStanding;
     }
 
     private void OnDisable()
     {
-        _platformDetector.DetectedWithCollisionInformation -= TryStand;
+        _platformDetector.DetectedWithCollisionInformation -= Stand;
         _platformDetector.Missed -= StopStanding;
     }
 
-    private void TryStand(Collision2D collision)
+    private void Stand(Collision2D collision)
     {
         float lowestYPoint = Mathf.Floor(_collider.bounds.min.y);
 

@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _mover.TryMove();
+        _mover.Move();
     }
 
     private void OnDisable()

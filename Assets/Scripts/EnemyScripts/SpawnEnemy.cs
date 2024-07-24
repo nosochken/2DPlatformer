@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 
-public class SpawnEnemy : MonoBehaviour, ISpawnable
+public class SpawnEnemy : MonoBehaviour, ISpawnable<SpawnEnemy>
 {
     private DetectEnemy _detectEnemy;
 
-    public event Action<ISpawnable> ReadyToSpawn;
+    public event Action<SpawnEnemy> ReadyToSpawn;
     public event Action<SpawnZone> GotSpawnZone;
 
     private void Awake()

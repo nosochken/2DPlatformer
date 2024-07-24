@@ -40,10 +40,10 @@ public class PatrollingEnemy : MonoBehaviour
         _canPatrol = false;
     }
 
-    public void TryPatrol()
+    public void Patrol()
     {
         if (_canPatrol)
-            _mover.TryMove(_patrolZone.LeftmostX, _patrolZone.RightmostX);
+            _mover.Move(_patrolZone.LeftmostX, _patrolZone.RightmostX);
     }
 
     private void GetPatrolZone(SpawnZone patrolZone)

@@ -35,9 +35,9 @@ public class PlayerMover : MonoBehaviour
         _jumper.IsJumping -= isJumping => IsJumping?.Invoke(isJumping);
     }
 
-    public void TryMove()
+    public void Move()
     {
-        _runner.TryRun();
-        _jumper.TryJump();
+        _runner.Run();
+        _jumper.Jump();
     }
 }

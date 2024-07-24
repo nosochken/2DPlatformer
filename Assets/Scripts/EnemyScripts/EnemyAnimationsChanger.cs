@@ -41,6 +41,6 @@ public class EnemyAnimationsChanger : MonoBehaviour
         _enemy.gameObject.TryGetComponent(out SpriteRenderer enemySpriteRenderer);
 
         if (enemySpriteRenderer != null)
-            enemySpriteRenderer.flipX = (direction >= 0) ? false : true;
+            enemySpriteRenderer.flipX = direction < 0;
     }
 }

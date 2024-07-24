@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _patrollingEnemy.TryPatrol();
+        _patrollingEnemy.Patrol();
     }
 
     private void OnDisable()

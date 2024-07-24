@@ -38,10 +38,10 @@ public class PlayerRunner : MonoBehaviour
         _inputReader.DirectionChanged -= ChangeRunningState;
     }
 
-    public void TryRun()
+    public void Run()
     {
         if (_direction != 0)
-            Run();
+            PerformRun();
         else if (_shouldRun)
             StopRunning();
     }
@@ -61,7 +61,7 @@ public class PlayerRunner : MonoBehaviour
         }
     }
 
-    private void Run()
+    private void PerformRun()
     {
         float x = _direction * _runningSpeed;
         Mover.MoveHorizontally(_rigidbody, x);
