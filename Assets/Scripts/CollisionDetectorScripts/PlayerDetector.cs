@@ -1,0 +1,1 @@
+public class PlayerDetector : Detector<DetectPlayer> { }
