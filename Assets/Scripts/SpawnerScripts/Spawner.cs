@@ -100,26 +100,6 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour, ISpawnable<T>
 
 		_currentSpawnZone = spawnZone;
 	}
-
-	/*private T TryGetT(ISpawnable spawnable)
-	{
-		if (spawnable is T)
-			return spawnable as T;
-		else
-			return null;
-	}
-
-	private void ReturnToPool(ISpawnable spawnable)
-	{
-		T item = TryGetT(spawnable);
-
-		if (item != null && item.gameObject.activeSelf)
-		{
-			_pool.Release(item);
-
-			_amountOfItemsOnScene--;
-		}
-	}*/
 	
 	private void ReturnToPool(T item)
     {

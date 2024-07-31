@@ -1,21 +1,17 @@
-using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PhysicalPlayer), typeof(PlayerPhysicsCustomizer))]
-public class DetectPlayer : MonoBehaviour, IDetectable
+public class DetectPlayer : Detect<Player>
 {
-    private Vector2 _startPosition;
+	private Vector2 _startPosition;
 
-    public event Action WasDetected;
+	private void Start()
+	{
+		_startPosition = transform.position;
+	}
 
-    private void Start()
-    {
-        _startPosition = transform.position;
-    }
-
-    public void WasDetectedBy<T>(Detector<T> detector) where T : MonoBehaviour, IDetectable
-    {
-        if (detector.gameObject.TryGetComponent<BottomBorder>(out _))
-            transform.position = _startPosition;
-    }
+	public override void WasDetectedBy<T>(Detector<T> detector)
+	{
+		if (detector.gameObject.TryGetComponent<BottomBorder>(out _))
+			transform.position = _startPosition;
+	}
 }
