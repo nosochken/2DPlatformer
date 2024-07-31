@@ -1,4 +1,4 @@
 public interface IHealable
 {
-   public void Heal(float health);
+    public void Heal(float health);
 }
