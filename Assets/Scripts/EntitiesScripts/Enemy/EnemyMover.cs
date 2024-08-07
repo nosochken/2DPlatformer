@@ -5,123 +5,123 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyStander), typeof(Collider2D))]
 public class EnemyMover : MonoBehaviour
 {
-	[SerializeField, Min(1)] private float _movementSpeed = 50f;
-	[SerializeField, Min(1)] private float _standingForSeconds = 2f;
+    [SerializeField, Min(1)] private float _movementSpeed = 50f;
+    [SerializeField, Min(1)] private float _standingForSeconds = 2f;
 
-	private Collider2D _collider;
-	private Rigidbody2D _rigidbody;
-	
-	private EnemyStander _stander;
+    private Collider2D _collider;
+    private Rigidbody2D _rigidbody;
 
-	private WaitForFixedUpdate _waitForFixedUpdate;
-	private WaitForSeconds _waitForSeconds;
+    private EnemyStander _stander;
 
-	private int _oppositeMovement = -1;
+    private WaitForFixedUpdate _waitForFixedUpdate;
+    private WaitForSeconds _waitForSeconds;
 
-	private bool _shouldReachRightEdge;
-	private bool _shouldReachLeftEdge;
-	
-	private float _rightEdge;
-	private float _leftEdge;
+    private int _oppositeMovement = -1;
 
-	public event Action<bool> IsStanding;
-	public event Action<bool> IsWalking;
-	public event Action<float> ChangedDirection;
-	
-	public float RightEdge => _rightEdge;
-	public float LeftEdge => _leftEdge;
+    private bool _shouldReachRightEdge;
+    private bool _shouldReachLeftEdge;
 
-	private void Awake()
-	{
-		_stander = GetComponent<EnemyStander>();
+    private float _rightEdge;
+    private float _leftEdge;
 
-		_rigidbody = GetComponent<Rigidbody2D>();
-		_collider = GetComponent<Collider2D>();
+    public event Action<bool> IsStanding;
+    public event Action<bool> IsWalking;
+    public event Action<float> ChangedDirection;
 
-		_waitForFixedUpdate = new WaitForFixedUpdate();
-		_waitForSeconds = new WaitForSeconds(_standingForSeconds);
-	}
+    public float RightEdge => _rightEdge;
+    public float LeftEdge => _leftEdge;
 
-	private void OnEnable()
-	{
-		_stander.IsStanding += isStanding => IsStanding?.Invoke(isStanding);
+    private void Awake()
+    {
+        _stander = GetComponent<EnemyStander>();
 
-		_shouldReachRightEdge = true;
-	}
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<Collider2D>();
 
-	private void OnDisable()
-	{
-		_stander.IsStanding -= isStanding => IsStanding?.Invoke(isStanding);
-	}
+        _waitForFixedUpdate = new WaitForFixedUpdate();
+        _waitForSeconds = new WaitForSeconds(_standingForSeconds);
+    }
 
-	public void Move(float leftmostX, float rightmostX)
-	{
-		if (_stander.IsOnPlatform)
-		{
-			if (_shouldReachRightEdge)
-				StartCoroutine(MoveRight(rightmostX));
+    private void OnEnable()
+    {
+        _stander.IsStanding += isStanding => IsStanding?.Invoke(isStanding);
 
-			else if (_shouldReachLeftEdge)
-				StartCoroutine(MoveLeft(leftmostX));
-		}
-	}
+        _shouldReachRightEdge = true;
+    }
 
-	private IEnumerator MoveRight(float rightmostX)
-	{
-		ChangedDirection?.Invoke(_movementSpeed);
-		IsWalking?.Invoke(_shouldReachRightEdge);
+    private void OnDisable()
+    {
+        _stander.IsStanding -= isStanding => IsStanding?.Invoke(isStanding);
+    }
 
-		PrepareInAdvanceToInspect();
+    public void Move(float leftmostX, float rightmostX)
+    {
+        if (_stander.IsOnPlatform)
+        {
+            if (_shouldReachRightEdge)
+                StartCoroutine(MoveRight(rightmostX));
 
-		_rightEdge = Mathf.Floor(rightmostX - _collider.bounds.extents.x);
+            else if (_shouldReachLeftEdge)
+                StartCoroutine(MoveLeft(leftmostX));
+        }
+    }
 
-		while (transform.position.x < _rightEdge)
-		{
-			Mover.MoveHorizontally(_rigidbody, _movementSpeed);
+    private IEnumerator MoveRight(float rightmostX)
+    {
+        ChangedDirection?.Invoke(_movementSpeed);
+        IsWalking?.Invoke(_shouldReachRightEdge);
 
-			yield return _waitForFixedUpdate;
-		}
+        PrepareInAdvanceToInspect();
 
-		IsWalking?.Invoke(_shouldReachRightEdge);
+        _rightEdge = Mathf.Floor(rightmostX - _collider.bounds.extents.x);
 
-		yield return StartCoroutine(LookAround());
+        while (transform.position.x < _rightEdge)
+        {
+            Mover.MoveHorizontally(_rigidbody, _movementSpeed);
 
-		_shouldReachLeftEdge = true;
-	}
+            yield return _waitForFixedUpdate;
+        }
 
-	private IEnumerator MoveLeft(float leftmostX)
-	{
-		float x = _movementSpeed * _oppositeMovement;
+        IsWalking?.Invoke(_shouldReachRightEdge);
 
-		ChangedDirection?.Invoke(x);
-		IsWalking?.Invoke(_shouldReachLeftEdge);
+        yield return StartCoroutine(LookAround());
 
-		PrepareInAdvanceToInspect();
+        _shouldReachLeftEdge = true;
+    }
 
-		_leftEdge = Mathf.Ceil(leftmostX + _collider.bounds.extents.x);
+    private IEnumerator MoveLeft(float leftmostX)
+    {
+        float x = _movementSpeed * _oppositeMovement;
 
-		while (transform.position.x > _leftEdge)
-		{
-			Mover.MoveHorizontally(_rigidbody, x);
+        ChangedDirection?.Invoke(x);
+        IsWalking?.Invoke(_shouldReachLeftEdge);
 
-			yield return _waitForFixedUpdate;
-		}
+        PrepareInAdvanceToInspect();
 
-		IsWalking?.Invoke(_shouldReachLeftEdge);
+        _leftEdge = Mathf.Ceil(leftmostX + _collider.bounds.extents.x);
 
-		yield return StartCoroutine(LookAround());
+        while (transform.position.x > _leftEdge)
+        {
+            Mover.MoveHorizontally(_rigidbody, x);
 
-		_shouldReachRightEdge = true;
-	}
+            yield return _waitForFixedUpdate;
+        }
 
-	private void PrepareInAdvanceToInspect()
-	{
-		_shouldReachRightEdge = false;
-		_shouldReachLeftEdge = false;
-	}
+        IsWalking?.Invoke(_shouldReachLeftEdge);
 
-	private IEnumerator LookAround()
-	{
-		yield return _waitForSeconds;
-	}
+        yield return StartCoroutine(LookAround());
+
+        _shouldReachRightEdge = true;
+    }
+
+    private void PrepareInAdvanceToInspect()
+    {
+        _shouldReachRightEdge = false;
+        _shouldReachLeftEdge = false;
+    }
+
+    private IEnumerator LookAround()
+    {
+        yield return _waitForSeconds;
+    }
 }

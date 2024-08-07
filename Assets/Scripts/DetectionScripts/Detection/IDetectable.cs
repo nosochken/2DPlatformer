@@ -6,5 +6,4 @@ public interface IDetectable
     public event Action WasDetected;
 
     public virtual void WasDetectedBy<T>(Detector<T> detector) where T : MonoBehaviour, IDetectable { }
-
 }

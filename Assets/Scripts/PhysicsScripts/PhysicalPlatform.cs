@@ -4,31 +4,31 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(TilemapCollider2D), typeof(CompositeCollider2D), typeof(PlatformEffector2D))]
 public class PhysicalPlatform : PhysicsCustomizer<Platform>
 {
-	private Rigidbody2D _rigidbody;
-	
-	private TilemapCollider2D _tilemapCollider;
-	private CompositeCollider2D _compositeCollider;
-	
-	private PlatformEffector2D _platformEffector;
+    private Rigidbody2D _rigidbody;
 
-	protected override void GetComponents()
-	{
-		_rigidbody = GetComponent<Rigidbody2D>();
+    private TilemapCollider2D _tilemapCollider;
+    private CompositeCollider2D _compositeCollider;
 
-		_tilemapCollider = GetComponent<TilemapCollider2D>();
-		_compositeCollider = GetComponent<CompositeCollider2D>();
+    private PlatformEffector2D _platformEffector;
 
-		_platformEffector = GetComponent<PlatformEffector2D>();
-	}
+    protected override void GetComponents()
+    {
+        _rigidbody = GetComponent<Rigidbody2D>();
 
-	protected override void ConfigureComponents()
-	{
-		_rigidbody.bodyType = RigidbodyType2D.Static;
+        _tilemapCollider = GetComponent<TilemapCollider2D>();
+        _compositeCollider = GetComponent<CompositeCollider2D>();
 
-		_tilemapCollider.usedByComposite = true;
-		_compositeCollider.usedByEffector = true;
+        _platformEffector = GetComponent<PlatformEffector2D>();
+    }
 
-		_platformEffector.useOneWay = true;
-		_platformEffector.useOneWayGrouping = true;
-	}
+    protected override void ConfigureComponents()
+    {
+        _rigidbody.bodyType = RigidbodyType2D.Static;
+
+        _tilemapCollider.usedByComposite = true;
+        _compositeCollider.usedByEffector = true;
+
+        _platformEffector.useOneWay = true;
+        _platformEffector.useOneWayGrouping = true;
+    }
 }
