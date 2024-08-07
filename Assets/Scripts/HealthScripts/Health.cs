@@ -1,63 +1,95 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(ColorChanger))]
 public class Health<T> : MonoBehaviour where T : MonoBehaviour
 {
-    [SerializeField, Min(0.1f)] private float _damageColorDelay = 0.5f;
-    protected float CurrentValue;
+	[SerializeField] private float _maxValue = 100f;
+	[SerializeField, Min(0.1f)] private float _colorChangeDelay = 0.5f;
+	
+	private ColorChanger _colorChanger;
+	private WaitForSeconds _waitForSeconds;
 
-    private SpriteRenderer _spriteRenderer;
-    private Color _defaultColor;
-    private WaitForSeconds _waitForSeconds;
+	private float _minValue = 0f;
+	private float _currentValue;
+	
+	private bool _isDead;
+	
+	public event Action Died;
+	
+	public bool IsDead => _isDead;
 
-    private float _maxValue;
-    private float _minValue = 0f;
+	private void Awake()
+	{
+		_colorChanger = GetComponent<ColorChanger>();
+		_waitForSeconds = new WaitForSeconds(_colorChangeDelay);
+	}
+	
+	private void OnEnable()
+	{
+		Restore();
+	}
 
-    public Action Died;
+	public void Decrease(float value)
+	{
+		if (value <= 0)
+			return;
 
-    protected float MaxValue => _maxValue;
+		_currentValue -= value;
 
-    private void Awake()
-    {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _defaultColor = _spriteRenderer.color;
+		TurnRedFromDamage();
+		
+		TryIncreaseToMinimumValue();
 
-        _waitForSeconds = new WaitForSeconds(_damageColorDelay);
-    }
+		TryDie();
+	}
+	
+	protected virtual void TryDie()
+	{
+		if (_currentValue <= _minValue)
+		{
+			_isDead = true;
+			Died?.Invoke();
+		}
+	}
+	
+	protected void Increase(float value)
+	{
+		if (value <= 0)
+			return;
 
-    public void Decrease(float value)
-    {
-        if (value <= 0)
-            return;
+		_currentValue += value;
+		
+		TurnGreenFromRecovery();
 
-        CurrentValue -= value;
+		TryReduceToMaxValue();
+	}
+	
+	protected void Restore()
+	{
+		_isDead = false;
+		_currentValue = _maxValue;
+	} 
+	
+	private void TryIncreaseToMinimumValue()
+	{
+		if (_currentValue < _minValue)
+			_currentValue = _minValue;
+	}
+	
+	private void TryReduceToMaxValue()
+	{
+		if (_currentValue > _maxValue)
+			_currentValue = _maxValue;
+	}
 
-        StartCoroutine(TurnRedFromDamage());
-
-        TryDie();
-    }
-
-    protected void Initialize(float maxValue)
-    {
-        if (maxValue < _minValue)
-            return;
-
-        _maxValue = maxValue;
-        CurrentValue = _maxValue;
-    }
-
-    private IEnumerator TurnRedFromDamage()
-    {
-        _spriteRenderer.color = Color.red;
-        yield return _waitForSeconds;
-
-        _spriteRenderer.color = _defaultColor;
-    }
-
-    private void TryDie()
-    {
-        if (CurrentValue <= _maxValue)
-            Died?.Invoke();
-    }
+	private void TurnRedFromDamage()
+	{
+		StartCoroutine(_colorChanger.ChangeColorForWhile(_waitForSeconds, Color.red));
+	}
+	
+	private void TurnGreenFromRecovery()
+	{
+		StartCoroutine(_colorChanger.ChangeColorForWhile(_waitForSeconds, Color.green));
+	}
 }

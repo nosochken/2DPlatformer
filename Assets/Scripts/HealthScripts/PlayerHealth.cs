@@ -1,18 +1,27 @@
+using UnityEngine;
+
 public class PlayerHealth : Health<Player>
 {
-    public void Recover(float value)
-    {
-        if (value <= 0)
-            return;
+	private Vector2 _startPosition;
+	
+	private void Start()
+	{
+		_startPosition = transform.position;
+	}
+	
+	public void Recover(float value)
+	{
+		Increase(value);
+	}
 
-        CurrentValue += value;
-
-        TryReduceToMaxValue();
-    }
-
-    private void TryReduceToMaxValue()
-    {
-        if (CurrentValue > MaxValue)
-            CurrentValue = MaxValue;
-    }
+	protected override void TryDie()
+	{
+		base.TryDie();
+		
+		if (IsDead)
+		{
+			Restore();
+			transform.position = _startPosition;
+		}
+	}
 }

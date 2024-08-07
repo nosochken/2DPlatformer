@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 8598363320735742325}
   - component: {fileID: 4736930446627658457}
   - component: {fileID: 7992381095285023313}
-  - component: {fileID: 2077601125023150005}
   - component: {fileID: 2162704193853632744}
   - component: {fileID: 7121956366551377057}
   - component: {fileID: 5759351706754726731}
@@ -27,6 +26,7 @@ GameObject:
   - component: {fileID: 3915155138779620453}
   - component: {fileID: 8748996440026854286}
   - component: {fileID: 6670942633343223803}
+  - component: {fileID: 4001783067936451720}
   m_Layer: 0
   m_Name: EnemySlime
   m_TagString: Untagged
@@ -220,18 +220,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &2077601125023150005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8205437050703664009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9089418375b69456b80cf04b23b80a5b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2162704193853632744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,4 +344,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damage: 10
-  _repelForce: 4
+  _damageZoneOffset: -0.5
+  _repelForce: 2
+  _delayMovementOfAttacked: 0.5
+--- !u!114 &4001783067936451720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205437050703664009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b919c15faf08435d8efd4e5a0880d0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxPlayerDetectionDistance: 3
+  _stalkingSpeed: 2

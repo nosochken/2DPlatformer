@@ -1,0 +1,1 @@
+public class DetectEnemy : Detection<Enemy> { }
