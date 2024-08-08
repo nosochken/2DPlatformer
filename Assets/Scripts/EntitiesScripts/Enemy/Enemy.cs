@@ -9,7 +9,6 @@ public class Enemy : MonoBehaviour, ILivable
 {
 	private PatrollingEnemy _patrollingEnemy;
 	private PlayerStalker _playerStalker;
-	private AttackerOfPlayer _playerAttacker;
 
 	public event Action<bool> IsStanding;
 	public event Action<bool> IsWalking;
@@ -19,7 +18,6 @@ public class Enemy : MonoBehaviour, ILivable
 	{
 		_playerStalker = GetComponent<PlayerStalker>();
 		_patrollingEnemy = GetComponent<PatrollingEnemy>();
-		_playerAttacker = GetComponent<AttackerOfPlayer>();
 	}
 
 	private void OnEnable()
@@ -31,9 +29,11 @@ public class Enemy : MonoBehaviour, ILivable
 
 	private void FixedUpdate()
 	{
-		_patrollingEnemy.Patrol();
-		_playerStalker.Stalk();
-		_playerAttacker.Attack();
+		if (_patrollingEnemy.CanPatrol && !_playerStalker.IsStalking)
+			_patrollingEnemy.Patrol();
+		
+		if (_playerStalker.CanStalk())
+			_playerStalker.Stalk();
 	}
 
 	private void OnDisable()

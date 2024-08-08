@@ -5,67 +5,36 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerStander))]
 public class PlayerJumper : MonoBehaviour
 {
-    [SerializeField] private InputReader _inputReader;
+	[SerializeField, Min(1)] private float _jumpForce = 11f;
 
-    [SerializeField, Min(1)] private float _jumpForce = 11f;
+	private Rigidbody2D _rigidbody;
 
-    private PlayerStander _stander;
+	private WaitForFixedUpdate _wait;
 
-    private Rigidbody2D _rigidbody;
+	public event Action<bool> IsJumping;
 
-    private bool _shouldJump;
+	private void Awake()
+	{
 
-    private WaitForFixedUpdate _wait;
+		_rigidbody = GetComponent<Rigidbody2D>();
 
-    public event Action<bool> IsJumping;
+		_wait = new WaitForFixedUpdate();
+	}
 
-    private void Awake()
-    {
-        _stander = GetComponent<PlayerStander>();
+	public IEnumerator Jump()
+	{
+		IsJumping?.Invoke(true);
 
-        _rigidbody = GetComponent<Rigidbody2D>();
+		float maxHeight = transform.position.y;
 
-        _wait = new WaitForFixedUpdate();
-    }
+		_rigidbody.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
 
-    private void OnEnable()
-    {
-        _inputReader.JumpKeyPressed += TryChangeJumpingState;
-    }
+		while (transform.position.y >= maxHeight)
+		{
+			maxHeight = transform.position.y;
+			yield return _wait;
+		}
 
-    private void OnDisable()
-    {
-        _inputReader.JumpKeyPressed -= TryChangeJumpingState;
-    }
-
-    public void Jump()
-    {
-        if (_shouldJump)
-            StartCoroutine(PerformJump());
-    }
-
-    private void TryChangeJumpingState()
-    {
-        if (_stander.IsOnPlatform)
-            _shouldJump = true;
-    }
-
-    private IEnumerator PerformJump()
-    {
-        IsJumping?.Invoke(_shouldJump);
-
-        float maxHeight = transform.position.y;
-
-        _rigidbody.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
-
-        _shouldJump = false;
-
-        while (transform.position.y >= maxHeight)
-        {
-            maxHeight = transform.position.y;
-            yield return _wait;
-        }
-
-        IsJumping?.Invoke(_shouldJump);
-    }
+		IsJumping?.Invoke(false);
+	}
 }

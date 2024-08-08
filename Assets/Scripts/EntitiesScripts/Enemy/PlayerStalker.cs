@@ -3,64 +3,69 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyMover), typeof(PlayerDetector))]
 public class PlayerStalker : MonoBehaviour
 {
-    private const string PlayerLayer = "Player";
+	private const string PlayerLayer = "Player";
 
-    [SerializeField] private float _maxPlayerDetectionDistance = 3f;
-    [SerializeField] private float _stalkingSpeed = 2f;
+	[SerializeField] private float _maxPlayerDetectionDistance = 3f;
+	[SerializeField] private float _stalkingSpeed = 2f;
 
-    private EnemyMover _mover;
-    private PlayerDetector _playerDetector;
+	private EnemyMover _mover;
+	private PlayerDetector _playerDetector;
+	
+	DetectPlayer _detectPlayer;
 
-    private Vector2 _direction;
+	private Vector2 _direction;
 
-    private bool _isStalking;
+	private bool _isStalking;
 
-    public bool IsStalking => _isStalking;
+	public bool IsStalking => _isStalking;
 
-    private void Awake()
-    {
-        _mover = GetComponent<EnemyMover>();
-        _playerDetector = GetComponent<PlayerDetector>();
+	private void Awake()
+	{
+		_mover = GetComponent<EnemyMover>();
+		_playerDetector = GetComponent<PlayerDetector>();
 
-        _direction = transform.right;
-    }
+		_direction = transform.right;
+	}
 
-    private void OnEnable()
-    {
-        _mover.ChangedDirection += ChangeDirectionToOpposite;
-    }
+	private void OnEnable()
+	{
+		_mover.ChangedDirection += ChangeDirectionToOpposite;
+	}
 
-    private void OnDisable()
-    {
-        _mover.ChangedDirection -= ChangeDirectionToOpposite;
+	private void OnDisable()
+	{
+		_mover.ChangedDirection -= ChangeDirectionToOpposite;
 
-        _isStalking = false;
-    }
+		_isStalking = false;
+	}
 
-    public void Stalk()
-    {
-        int playerLayer = LayerMask.GetMask(PlayerLayer);
-        Vector2 origin = transform.position;
+	public bool CanStalk()
+	{
+		int playerLayer = LayerMask.GetMask(PlayerLayer);
+		Vector2 origin = transform.position;
 
-        DetectPlayer detectPlayer = _playerDetector.DetectViaRaycast(
-            playerLayer, origin, _direction, _maxPlayerDetectionDistance);
+		_detectPlayer = _playerDetector.DetectViaRaycast(
+			playerLayer, origin, _direction, _maxPlayerDetectionDistance);
 
-        if (detectPlayer != null)
-            Stalk(detectPlayer);
-    }
+		if (_detectPlayer != null)
+			return true;
+		
+		return false;
+	}
 
-    private void Stalk(DetectPlayer detectPlayer)
-    {
-        _isStalking = true;
+	public void Stalk()
+	{
+		_isStalking = true;
 
-        if (transform.position.x < _mover.RightEdge && transform.position.x > _mover.LeftEdge)
-            transform.position = Vector2.MoveTowards(transform.position, detectPlayer.transform.position, _stalkingSpeed * Time.fixedDeltaTime);
+		if (transform.position.x < _mover.RightEdge && transform.position.x > _mover.LeftEdge)
+			transform.position = Vector2.MoveTowards(transform.position, _detectPlayer.transform.position, _stalkingSpeed * Time.fixedDeltaTime);
 
-        _isStalking = false;
-    }
+		_isStalking = false;
+		_detectPlayer = null;
+	}
 
-    private void ChangeDirectionToOpposite(float direction)
-    {
-        _direction = (direction > 0) ? transform.right : -transform.right;
-    }
+	private void ChangeDirectionToOpposite(float direction)
+	{
+		_direction = (direction > 0) ? transform.right : -transform.right;
+	}
 }
