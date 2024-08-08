@@ -1,1 +1,1 @@
-public class EnemyHealth : Health<Enemy> { }
+public class EnemyHealth : Health { }

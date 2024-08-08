@@ -1,95 +1,77 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(ColorChanger))]
-public class Health<T> : MonoBehaviour where T : MonoBehaviour
+public class Health : MonoBehaviour
 {
-    [SerializeField] private float _maxValue = 100f;
-    [SerializeField, Min(0.1f)] private float _colorChangeDelay = 0.5f;
+	[SerializeField] private float _maxValue = 100f;
 
-    private ColorChanger _colorChanger;
-    private WaitForSeconds _waitForSeconds;
+	private float _minValue = 0f;
+	private float _currentValue;
 
-    private float _minValue = 0f;
-    private float _currentValue;
+	private bool _isDead;
+	
+	public event Action Increased;
+	public event Action Decreased;
 
-    private bool _isDead;
+	public event Action Died;
 
-    public event Action Died;
+	public bool IsDead => _isDead;
 
-    public bool IsDead => _isDead;
+	private void OnEnable()
+	{
+		Restore();
+	}
 
-    private void Awake()
-    {
-        _colorChanger = GetComponent<ColorChanger>();
-        _waitForSeconds = new WaitForSeconds(_colorChangeDelay);
-    }
+	public void Decrease(float value)
+	{
+		if (value <= 0)
+			return;
 
-    private void OnEnable()
-    {
-        Restore();
-    }
+		_currentValue -= value;
 
-    public void Decrease(float value)
-    {
-        if (value <= 0)
-            return;
+		Decreased?.Invoke();
 
-        _currentValue -= value;
+		TryIncreaseToMinimumValue();
 
-        TurnRedFromDamage();
+		TryDie();
+	}
 
-        TryIncreaseToMinimumValue();
+	protected virtual void TryDie()
+	{
+		if (_currentValue <= _minValue)
+		{
+			_isDead = true;
+			Died?.Invoke();
+		}
+	}
 
-        TryDie();
-    }
+	protected void Increase(float value)
+	{
+		if (value <= 0)
+			return;
 
-    protected virtual void TryDie()
-    {
-        if (_currentValue <= _minValue)
-        {
-            _isDead = true;
-            Died?.Invoke();
-        }
-    }
+		_currentValue += value;
 
-    protected void Increase(float value)
-    {
-        if (value <= 0)
-            return;
+		Increased?.Invoke();
 
-        _currentValue += value;
+		TryReduceToMaxValue();
+	}
 
-        TurnGreenFromRecovery();
+	protected void Restore()
+	{
+		_isDead = false;
+		_currentValue = _maxValue;
+	}
 
-        TryReduceToMaxValue();
-    }
+	private void TryIncreaseToMinimumValue()
+	{
+		if (_currentValue < _minValue)
+			_currentValue = _minValue;
+	}
 
-    protected void Restore()
-    {
-        _isDead = false;
-        _currentValue = _maxValue;
-    }
-
-    private void TryIncreaseToMinimumValue()
-    {
-        if (_currentValue < _minValue)
-            _currentValue = _minValue;
-    }
-
-    private void TryReduceToMaxValue()
-    {
-        if (_currentValue > _maxValue)
-            _currentValue = _maxValue;
-    }
-
-    private void TurnRedFromDamage()
-    {
-        StartCoroutine(_colorChanger.ChangeColorForWhile(_waitForSeconds, Color.red));
-    }
-
-    private void TurnGreenFromRecovery()
-    {
-        StartCoroutine(_colorChanger.ChangeColorForWhile(_waitForSeconds, Color.green));
-    }
+	private void TryReduceToMaxValue()
+	{
+		if (_currentValue > _maxValue)
+			_currentValue = _maxValue;
+	}
 }

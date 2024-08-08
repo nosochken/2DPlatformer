@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHealth : Health<Player>
+public class PlayerHealth : Health
 {
     private Vector2 _startPosition;
 

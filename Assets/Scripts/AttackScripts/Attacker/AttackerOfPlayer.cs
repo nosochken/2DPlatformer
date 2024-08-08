@@ -1,14 +1,14 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AttackedPlayerDetector))]
-public class PlayerAttacker : Attacker<AttackedPlayer>
+public class AttackerOfPlayer : Attacker<AttackedPlayer>
 {
     [SerializeField, Min(0)] private float _damageZoneOffset = -0.5f;
     [SerializeField, Min(1)] private float _repelForce = 4f;
 
-    protected override void DetermineCanDamageDone(AttackedPlayer attackedPlayer, float damageZoneOffset = 0f)
+    protected override void CanDamageDone(AttackedPlayer attackedPlayer, float damageZoneOffset = 0f)
     {
-        base.DetermineCanDamageDone(attackedPlayer, _damageZoneOffset);
+        base.CanDamageDone(attackedPlayer, _damageZoneOffset);
 
         Repel(attackedPlayer);
     }
@@ -17,7 +17,7 @@ public class PlayerAttacker : Attacker<AttackedPlayer>
     {
         if (attackedPlayer.gameObject.TryGetComponent(out Rigidbody2D attackedPlayerRigidbody))
         {
-            Vector2 repelDirection = ((Vector2)attackedPlayer.transform.position - GetPointOfContact()).normalized;
+            Vector2 repelDirection = ((Vector2)attackedPlayer.transform.position - GetContactPoint()).normalized;
             attackedPlayerRigidbody.velocity = Vector2.zero;
 
             attackedPlayer.BecomeImmobile();

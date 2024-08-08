@@ -14,11 +14,11 @@ public class InputReader : MonoBehaviour
 
     private void Update()
     {
-        TrackChangeInDirection();
-        TrackJumpKey();
+        DetectDirectionChange();
+        DetectJumpKeyPress();
     }
 
-    private void TrackChangeInDirection()
+    private void DetectDirectionChange()
     {
         float previousDirection = _direction;
         _direction = Input.GetAxis(HorizontalAxis);
@@ -27,7 +27,7 @@ public class InputReader : MonoBehaviour
             DirectionChanged?.Invoke(_direction);
     }
 
-    private void TrackJumpKey()
+    private void DetectJumpKeyPress()
     {
         if (Input.GetKeyDown(_jumpButton))
             JumpKeyPressed?.Invoke();
