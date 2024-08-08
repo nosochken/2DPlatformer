@@ -1,1 +1,1 @@
-public class DetectEnemy : Detected<Enemy> { }
+public class DetectEnemy : Detection<Enemy> { }

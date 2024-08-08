@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PhysicsCustomizer<>))]
-public class Detected<T> : MonoBehaviour, IDetectable where T : MonoBehaviour
+public class Detection<T> : MonoBehaviour, IDetectable where T : MonoBehaviour
 {
     public event Action WasDetected;
 

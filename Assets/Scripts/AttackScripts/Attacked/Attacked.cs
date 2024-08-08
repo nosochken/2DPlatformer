@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Health<>))]
-public class Attacked<T> : Detected<T>, IAttackable where T : MonoBehaviour, ILivable
+public class Attacked<T> : Detection<T>, IAttackable where T : MonoBehaviour, ILivable
 {
     private Health<T> _health;
 

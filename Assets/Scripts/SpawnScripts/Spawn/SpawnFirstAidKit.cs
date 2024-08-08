@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(DetectFirstAidKit))]
-public class SpawnFirstAidKit : Collectable<SpawnFirstAidKit, FirstAidKit>
+public class SpawnFirstAidKit : MonoBehaviour, ISpawnable<SpawnFirstAidKit>
 {
-    /*private DetectFirstAidKit _detectFirstAidKit;
+    private DetectFirstAidKit _detectFirstAidKit;
 
     public event Action<SpawnFirstAidKit> ReadyToSpawn;
 
@@ -21,5 +21,5 @@ public class SpawnFirstAidKit : Collectable<SpawnFirstAidKit, FirstAidKit>
     private void OnDisable()
     {
         _detectFirstAidKit.WasDetected -= () => ReadyToSpawn?.Invoke(this);
-    }*/
+    }
 }

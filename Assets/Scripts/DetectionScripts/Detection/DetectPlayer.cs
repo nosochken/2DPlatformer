@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DetectPlayer : Detected<Player>
+public class DetectPlayer : Detection<Player>
 {
     private Vector2 _startPosition;
 

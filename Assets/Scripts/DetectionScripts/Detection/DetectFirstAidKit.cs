@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(FirstAidKit))]
-public class DetectFirstAidKit : Detected<FirstAidKit>
+public class DetectFirstAidKit : Detection<FirstAidKit>
 {
     private FirstAidKit _firstAidKit;
 
