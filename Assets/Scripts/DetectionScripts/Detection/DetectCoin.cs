@@ -1,1 +1,1 @@
-public class DetectCoin : Detection<Coin> { }
+public class DetectCoin : Detected<Coin> { }
