@@ -12,7 +12,6 @@ public class Health : MonoBehaviour
 	
 	public event Action Increased;
 	public event Action Decreased;
-
 	public event Action Died;
 
 	public bool IsDead => _isDead;
