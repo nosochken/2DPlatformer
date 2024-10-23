@@ -24,6 +24,6 @@ public class HealablePlayer : MonoBehaviour
 
     private void Heal(DetectFirstAidKit detectFirstAidKit)
     {
-        _health.Recover(detectFirstAidKit.HealingValue);
+        _health.Increase(detectFirstAidKit.HealingValue);
     }
 }

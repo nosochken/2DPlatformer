@@ -3,74 +3,63 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-	[SerializeField] private float _maxValue = 100f;
+    [SerializeField] private float _maxValue = 100f;
 
-	private float _minValue = 0f;
-	private float _currentValue;
+    private float _minValue = 0f;
+    private float _currentValue;
+    private bool _isDead;
 
-	private bool _isDead;
-	
-	public event Action Increased;
-	public event Action Decreased;
-	public event Action Died;
+    public event Action<float, float> Changed;
+    public event Action Died;
 
-	public bool IsDead => _isDead;
+    public float CurrentValue => _currentValue;
+    public float MaxValue => _maxValue;
+    public bool IsDead => _isDead;
 
-	private void OnEnable()
-	{
-		Restore();
-	}
+    private void OnEnable()
+    {
+        Restore();
+    }
 
-	public void Decrease(float value)
-	{
-		if (value <= 0)
-			return;
+    public void Decrease(float value)
+    {
+        if (value <= 0)
+            return;
 
-		_currentValue -= value;
+        Change(-value);
 
-		Decreased?.Invoke();
+        TryDie();
+    }
 
-		TryIncreaseToMinimumValue();
+    public void Increase(float value)
+    {
+        if (value <= 0)
+            return;
 
-		TryDie();
-	}
+        Change(value);
+    }
 
-	protected virtual void TryDie()
-	{
-		if (_currentValue <= _minValue)
-		{
-			_isDead = true;
-			Died?.Invoke();
-		}
-	}
+    protected virtual void TryDie()
+    {
+        if (_currentValue <= _minValue)
+        {
+            _isDead = true;
+            Died?.Invoke();
+        }
+    }
 
-	protected void Increase(float value)
-	{
-		if (value <= 0)
-			return;
+    protected void Restore()
+    {
+        _isDead = false;
+        _currentValue = _maxValue;
 
-		_currentValue += value;
+        Changed?.Invoke(_currentValue, _maxValue);
+    }
 
-		Increased?.Invoke();
+    private void Change(float value)
+    {
+        _currentValue = Mathf.Clamp(_currentValue + value, _minValue, _maxValue);
 
-		TryReduceToMaxValue();
-	}
-
-	protected void Restore()
-	{
-		_isDead = false;
-		_currentValue = _maxValue;
-	}
-
-	private void TryIncreaseToMinimumValue()
-	{
-		if (_currentValue < _minValue)
-			_currentValue = _minValue;
-	}
-
-	private void TryReduceToMaxValue()
-	{
-		if (_currentValue > _maxValue)
-			_currentValue = _maxValue;
-	}
+        Changed?.Invoke(_currentValue, _maxValue);
+    }
 }

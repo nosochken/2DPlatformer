@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Collectable<T1, T2> : MonoBehaviour, ISpawnable<T1> where T1 : MonoBehaviour, ISpawnable<T1> where T2 : MonoBehaviour
 {
-   private Detected<T2> _detected;
+    private Detected<T2> _detected;
 
     public event Action<T1> ReadyToSpawn;
 

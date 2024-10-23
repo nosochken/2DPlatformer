@@ -9,11 +9,6 @@ public class PlayerHealth : Health
         _startPosition = transform.position;
     }
 
-    public void Recover(float value)
-    {
-        Increase(value);
-    }
-
     protected override void TryDie()
     {
         base.TryDie();
