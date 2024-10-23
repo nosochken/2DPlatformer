@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyAnimationsChanger), typeof(PhysicalEnemy), typeof(EnemyHealth))]
 [RequireComponent(typeof(PatrollingEnemy), typeof(SpawnEnemy), typeof(DetectEnemy))]
 [RequireComponent(typeof(AttackedEnemy), typeof(PlayerStalker), typeof(AttackerOfPlayer))]
-[RequireComponent(typeof(ColorChanger))]
 public class Enemy : MonoBehaviour, ILivable
 {
 	private PatrollingEnemy _patrollingEnemy;

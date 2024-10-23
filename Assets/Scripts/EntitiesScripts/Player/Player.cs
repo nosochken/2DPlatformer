@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAnimationsChanger), typeof(PhysicalPlayer), typeof(PlayerHealth))]
 [RequireComponent(typeof(PlayerMover), typeof(DetectPlayer), typeof(AttackerOfEnemy))]
 [RequireComponent(typeof(PlayerCoinCollector), typeof(AttackedPlayer), typeof(HealablePlayer))]
-[RequireComponent(typeof(ColorChanger))]
 public class Player : MonoBehaviour, ILivable
 {
 	private PlayerMover _mover;
