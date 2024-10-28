@@ -5,17 +5,20 @@ public class InputReader : MonoBehaviour
 {
     private const string HorizontalAxis = "Horizontal";
 
-    [SerializeField] private KeyCode _jumpButton = KeyCode.Space;
+    [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
+    [SerializeField] private KeyCode _vampirismKey = KeyCode.Q;
 
     private float _direction;
 
     public event Action<float> DirectionChanged;
     public event Action JumpKeyPressed;
+    public event Action VampirismKeyPressed;
 
     private void Update()
     {
         ReadDirectionChange();
         ReadJumpKey();
+        ReadVampirismKey();
     }
 
     private void ReadDirectionChange()
@@ -29,7 +32,13 @@ public class InputReader : MonoBehaviour
 
     private void ReadJumpKey()
     {
-        if (Input.GetKeyDown(_jumpButton))
+        if (Input.GetKeyDown(_jumpKey))
             JumpKeyPressed?.Invoke();
+    }
+
+    private void ReadVampirismKey()
+    {
+        if (Input.GetKeyDown(_vampirismKey))
+            VampirismKeyPressed?.Invoke();
     }
 }
