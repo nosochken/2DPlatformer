@@ -12,25 +12,25 @@ public class Detector<T> : MonoBehaviour where T : MonoBehaviour, IDetectable
     public T FindNearestDetectable(LayerMask layerMask, float radius)
     {
         float shortestDistanceSqr = Mathf.Infinity;
-        Collider2D nearestEnemyCollider = null;
+        Collider2D nearestDetectableCollider = null;
 
-        Collider2D[] enemiesInRange = Physics2D.OverlapCircleAll(transform.position, radius, layerMask);
+        Collider2D[] detectablesInRange = Physics2D.OverlapCircleAll(transform.position, radius, layerMask);
 
-        if (enemiesInRange.Length > 0)
+        if (detectablesInRange.Length > 0)
         {
-            foreach (Collider2D enemy in enemiesInRange)
+            foreach (Collider2D detectable in detectablesInRange)
             {
-                float distanceToEnemySqr = (transform.position - enemy.transform.position).sqrMagnitude;
+                float distanceToDetectablesSqr = (transform.position - detectable.transform.position).sqrMagnitude;
 
-                if (distanceToEnemySqr < shortestDistanceSqr)
+                if (distanceToDetectablesSqr < shortestDistanceSqr)
                 {
-                    shortestDistanceSqr = distanceToEnemySqr;
-                    nearestEnemyCollider = enemy;
+                    shortestDistanceSqr = distanceToDetectablesSqr;
+                    nearestDetectableCollider = detectable;
                 }
             }
         }
 
-        return nearestEnemyCollider ? nearestEnemyCollider.GetComponent<T>() : null;
+        return nearestDetectableCollider ? nearestDetectableCollider.GetComponent<T>() : null;
     }
 
     public T DetectViaRaycast(int layerMask, Vector2 origin, Vector2 direction, float maxDistance)
