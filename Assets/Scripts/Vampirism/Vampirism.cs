@@ -5,96 +5,96 @@ using UnityEngine;
 [RequireComponent(typeof(AttackedEnemyDetector))]
 public class Vampirism : MonoBehaviour
 {
-	private const float RadiusToDiameterRatio = 2f;
+    private const float RadiusToDiameterRatio = 2f;
 
-	[SerializeField] private LayerMask _enemyLayerMask;
-	[SerializeField] private float _abilityDuration = 6f;
-	[SerializeField] private float _rechargeTime = 4f;
-	[SerializeField] private float _abilityRadius = 4f;
-	[SerializeField] private float _damagePerSecond = 4f;
+    [SerializeField] private LayerMask _enemyLayerMask;
+    [SerializeField] private float _abilityDuration = 6f;
+    [SerializeField] private float _rechargeTime = 4f;
+    [SerializeField] private float _abilityRadius = 4f;
+    [SerializeField] private float _damagePerSecond = 4f;
 
-	private AttackedEnemyDetector _attackedEnemyDetector;
-	private Health _health;
-	private Coroutine _coroutineOfAbility;
+    private AttackedEnemyDetector _attackedEnemyDetector;
+    private Health _health;
+    private Coroutine _coroutineOfAbility;
 
-	private float _startTimeValue = 0f;
-	private float _abilityTimeLeft;
-	private float _cooldownTimeLeft;
+    private float _startTimeValue = 0f;
+    private float _abilityTimeLeft;
+    private float _cooldownTimeLeft;
 
-	public event Action<float, float> AbilityUsing;
-	public event Action<float, float> AbilityRecharging;
+    public event Action<float, float> AbilityUsing;
+    public event Action<float, float> AbilityRecharging;
 
-	private void Awake()
-	{
-		_attackedEnemyDetector = GetComponent<AttackedEnemyDetector>();
-		_health = GetComponentInParent<Health>();
+    private void Awake()
+    {
+        _attackedEnemyDetector = GetComponent<AttackedEnemyDetector>();
+        _health = GetComponentInParent<Health>();
 
-		transform.localScale = Vector2.one * _abilityRadius * RadiusToDiameterRatio;
+        transform.localScale = Vector2.one * _abilityRadius * RadiusToDiameterRatio;
 
-		_abilityTimeLeft = _abilityDuration;
-		_cooldownTimeLeft = _rechargeTime;
-	}
-	
-	private void Start()
-	{
-		AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
-	}
+        _abilityTimeLeft = _abilityDuration;
+        _cooldownTimeLeft = _rechargeTime;
+    }
 
-	public void Activate()
-	{
-		if (_cooldownTimeLeft >= _rechargeTime)
-		{
-			_cooldownTimeLeft = _startTimeValue;
+    private void Start()
+    {
+        AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
+    }
 
-			if (_coroutineOfAbility != null)
-				StopCoroutine(_coroutineOfAbility);
-			_coroutineOfAbility = StartCoroutine(UseAbility());
-		}
-	}
+    public void Activate()
+    {
+        if (_cooldownTimeLeft >= _rechargeTime)
+        {
+            _cooldownTimeLeft = _startTimeValue;
 
-	private IEnumerator UseAbility()
-	{
-		float damageAccumulator = 0f;
-		float fullAccumulator = 1f;
+            if (_coroutineOfAbility != null)
+                StopCoroutine(_coroutineOfAbility);
+            _coroutineOfAbility = StartCoroutine(UseAbility());
+        }
+    }
 
-		while (_abilityTimeLeft > _startTimeValue)
-		{
-			_abilityTimeLeft -= Time.deltaTime;
-			AbilityUsing?.Invoke(_abilityTimeLeft, _abilityDuration);
+    private IEnumerator UseAbility()
+    {
+        float damageAccumulator = 0f;
+        float fullAccumulator = 1f;
 
-			AttackedEnemy nearestEnemy = _attackedEnemyDetector.FindNearestDetectable(_enemyLayerMask, _abilityRadius);
+        while (_abilityTimeLeft > _startTimeValue)
+        {
+            _abilityTimeLeft -= Time.deltaTime;
+            AbilityUsing?.Invoke(_abilityTimeLeft, _abilityDuration);
 
-			if (nearestEnemy != null)
-			{
-				float damageDealt = _damagePerSecond * Time.deltaTime;
-				damageAccumulator += damageDealt;
+            AttackedEnemy nearestEnemy = _attackedEnemyDetector.FindNearestDetectable(_enemyLayerMask, _abilityRadius);
 
-				if (damageAccumulator >= fullAccumulator)
-				{
-					int wholeDamageToApply = Mathf.FloorToInt(damageAccumulator);
+            if (nearestEnemy != null)
+            {
+                float damageDealt = _damagePerSecond * Time.deltaTime;
+                damageAccumulator += damageDealt;
 
-					nearestEnemy.TakeDamage(wholeDamageToApply);
-					_health.Increase(wholeDamageToApply);
+                if (damageAccumulator >= fullAccumulator)
+                {
+                    int wholeDamageToApply = Mathf.FloorToInt(damageAccumulator);
 
-					damageAccumulator -= wholeDamageToApply;
-				}
-			}
-			
-			yield return null;
-		}
+                    nearestEnemy.TakeDamage(wholeDamageToApply);
+                    _health.Increase(wholeDamageToApply);
 
-		StartCoroutine(ChargeAbility());
-	}
+                    damageAccumulator -= wholeDamageToApply;
+                }
+            }
 
-	private IEnumerator ChargeAbility()
-	{
-		while (_cooldownTimeLeft < _rechargeTime)
-		{
-			_cooldownTimeLeft += Time.deltaTime;
-			AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
-			yield return null;
-		}
+            yield return null;
+        }
 
-		_abilityTimeLeft = _abilityDuration;
-	}
+        StartCoroutine(ChargeAbility());
+    }
+
+    private IEnumerator ChargeAbility()
+    {
+        while (_cooldownTimeLeft < _rechargeTime)
+        {
+            _cooldownTimeLeft += Time.deltaTime;
+            AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
+            yield return null;
+        }
+
+        _abilityTimeLeft = _abilityDuration;
+    }
 }
