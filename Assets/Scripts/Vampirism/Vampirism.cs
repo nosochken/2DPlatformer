@@ -13,7 +13,6 @@ public class Vampirism : MonoBehaviour
 	[SerializeField] private float _abilityRadius = 4f;
 	[SerializeField] private float _damagePerSecond = 4f;
 
-
 	private AttackedEnemyDetector _attackedEnemyDetector;
 	private Health _health;
 	private Coroutine _coroutineOfAbility;
