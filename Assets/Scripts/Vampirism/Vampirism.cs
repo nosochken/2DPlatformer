@@ -48,6 +48,7 @@ public class Vampirism : MonoBehaviour
 
             if (_coroutineOfAbility != null)
                 StopCoroutine(_coroutineOfAbility);
+
             _coroutineOfAbility = StartCoroutine(UseAbility());
         }
     }
