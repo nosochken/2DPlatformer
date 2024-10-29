@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3697594726067410289}
   - component: {fileID: 1977309403359908115}
   - component: {fileID: 2703104453339004273}
+  - component: {fileID: 3347516347212569483}
   m_Layer: 0
   m_Name: Vampirism
   m_TagString: Untagged
@@ -98,6 +99,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebb7d9ea18ccb4254a8f2475d7d3b9fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   _abilityDuration: 6
   _rechargeTime: 4
   _abilityRadius: 1
@@ -112,6 +116,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe1f605396c624962a94268e2b43ac40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3347516347212569483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425667920079896404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0ed74db9e294b00bad9c91e1fdcca4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3513010224576037914

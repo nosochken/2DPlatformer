@@ -2,117 +2,100 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AttackedEnemyDetector))]
 public class Vampirism : MonoBehaviour
 {
-    private const string EnemyLayer = "Enemy";
-    private const float RadiusToDiameterRatio = 2f;
+	private const float RadiusToDiameterRatio = 2f;
 
-    [SerializeField] private float _abilityDuration = 6f;
-    [SerializeField] private float _rechargeTime = 4f;
-    [SerializeField] private float _abilityRadius = 4f;
-    [SerializeField] private float _damagePerSecond = 4f;
+	[SerializeField] private LayerMask _enemyLayerMask;
+	[SerializeField] private float _abilityDuration = 6f;
+	[SerializeField] private float _rechargeTime = 4f;
+	[SerializeField] private float _abilityRadius = 4f;
+	[SerializeField] private float _damagePerSecond = 4f;
 
-    private Health _health;
-    private LayerMask _enemyLayerMask;
-    private Coroutine _coroutineOfAbility;
 
-    private float _startTimeValue = 0f;
-    private float _abilityTimeLeft;
-    private float _cooldownTimeLeft;
+	private AttackedEnemyDetector _attackedEnemyDetector;
+	private Health _health;
+	private Coroutine _coroutineOfAbility;
 
-    public event Action<float, float> AbilityUsing;
-    public event Action<float, float> AbilityRecharging;
+	private float _startTimeValue = 0f;
+	private float _abilityTimeLeft;
+	private float _cooldownTimeLeft;
 
-    private void Awake()
-    {
-        _health = GetComponentInParent<Health>();
+	public event Action<float, float> AbilityUsing;
+	public event Action<float, float> AbilityRecharging;
 
-        _enemyLayerMask = LayerMask.GetMask(EnemyLayer);
-        transform.localScale = Vector2.one * _abilityRadius * RadiusToDiameterRatio;
+	private void Awake()
+	{
+		_attackedEnemyDetector = GetComponent<AttackedEnemyDetector>();
+		_health = GetComponentInParent<Health>();
 
-        _abilityTimeLeft = _abilityDuration;
-        _cooldownTimeLeft = _rechargeTime;
-        AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
-    }
+		transform.localScale = Vector2.one * _abilityRadius * RadiusToDiameterRatio;
 
-    public void Activate()
-    {
-        if (_cooldownTimeLeft >= _rechargeTime)
-        {
-            _cooldownTimeLeft = _startTimeValue;
+		_abilityTimeLeft = _abilityDuration;
+		_cooldownTimeLeft = _rechargeTime;
+	}
+	
+	private void Start()
+	{
+		AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
+	}
 
-            if (_coroutineOfAbility != null)
-                StopCoroutine(_coroutineOfAbility);
-            _coroutineOfAbility = StartCoroutine(UseAbility());
-        }
-    }
+	public void Activate()
+	{
+		if (_cooldownTimeLeft >= _rechargeTime)
+		{
+			_cooldownTimeLeft = _startTimeValue;
 
-    private IEnumerator UseAbility()
-    {
-        float damageAccumulator = 0f;
-        float fullAccumulator = 1f;
+			if (_coroutineOfAbility != null)
+				StopCoroutine(_coroutineOfAbility);
+			_coroutineOfAbility = StartCoroutine(UseAbility());
+		}
+	}
 
-        while (_abilityTimeLeft > _startTimeValue)
-        {
-            _abilityTimeLeft -= Time.deltaTime;
-            AbilityUsing?.Invoke(_abilityTimeLeft, _abilityDuration);
+	private IEnumerator UseAbility()
+	{
+		float damageAccumulator = 0f;
+		float fullAccumulator = 1f;
 
-            AttackedEnemy nearestEnemy = FindNearestEnemy();
+		while (_abilityTimeLeft > _startTimeValue)
+		{
+			_abilityTimeLeft -= Time.deltaTime;
+			AbilityUsing?.Invoke(_abilityTimeLeft, _abilityDuration);
 
-            if (nearestEnemy != null)
-            {
-                float damageDealt = _damagePerSecond * Time.deltaTime;
-                damageAccumulator += damageDealt;
+			AttackedEnemy nearestEnemy = _attackedEnemyDetector.FindNearestDetectable(_enemyLayerMask, _abilityRadius);
 
-                if (damageAccumulator >= fullAccumulator)
-                {
-                    int wholeDamageToApply = Mathf.FloorToInt(damageAccumulator);
+			if (nearestEnemy != null)
+			{
+				float damageDealt = _damagePerSecond * Time.deltaTime;
+				damageAccumulator += damageDealt;
 
-                    nearestEnemy.TakeDamage(wholeDamageToApply);
-                    _health.Increase(wholeDamageToApply);
+				if (damageAccumulator >= fullAccumulator)
+				{
+					int wholeDamageToApply = Mathf.FloorToInt(damageAccumulator);
 
-                    damageAccumulator -= wholeDamageToApply;
-                }
-            }
-            yield return null;
-        }
+					nearestEnemy.TakeDamage(wholeDamageToApply);
+					_health.Increase(wholeDamageToApply);
 
-        StartCoroutine(ChargeAbility());
-    }
+					damageAccumulator -= wholeDamageToApply;
+				}
+			}
+			
+			yield return null;
+		}
 
-    private AttackedEnemy FindNearestEnemy()
-    {
-        float shortestDistanceSqr = Mathf.Infinity;
-        Collider2D nearestEnemyCollider = null;
+		StartCoroutine(ChargeAbility());
+	}
 
-        Collider2D[] enemiesInRange = Physics2D.OverlapCircleAll(transform.position, _abilityRadius, _enemyLayerMask);
+	private IEnumerator ChargeAbility()
+	{
+		while (_cooldownTimeLeft < _rechargeTime)
+		{
+			_cooldownTimeLeft += Time.deltaTime;
+			AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
+			yield return null;
+		}
 
-        if (enemiesInRange.Length > 0)
-        {
-            foreach (Collider2D enemy in enemiesInRange)
-            {
-                float distanceToEnemySqr = (transform.position - enemy.transform.position).sqrMagnitude;
-
-                if (distanceToEnemySqr < shortestDistanceSqr)
-                {
-                    shortestDistanceSqr = distanceToEnemySqr;
-                    nearestEnemyCollider = enemy;
-                }
-            }
-        }
-
-        return nearestEnemyCollider ? nearestEnemyCollider.GetComponent<AttackedEnemy>() : null;
-    }
-
-    private IEnumerator ChargeAbility()
-    {
-        while (_cooldownTimeLeft < _rechargeTime)
-        {
-            _cooldownTimeLeft += Time.deltaTime;
-            AbilityRecharging?.Invoke(_cooldownTimeLeft, _rechargeTime);
-            yield return null;
-        }
-
-        _abilityTimeLeft = _abilityDuration;
-    }
+		_abilityTimeLeft = _abilityDuration;
+	}
 }
